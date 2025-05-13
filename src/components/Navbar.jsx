@@ -4,9 +4,12 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline'; // Cambia la imp
 
 export function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -15,26 +18,38 @@ export function Navbar() {
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold">EcoNectar</Link>
 
+        {/* Icono de menú para pantallas pequeñas */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          ☰
+        </button>
+
         {/* Enlaces de navegación */}
-        <div className="flex flex-wrap space-x-6 items-center font-semibold ml-auto">
-          <Link className="hover:text-gray-300" to="/productos">Productos</Link>
-          <Link className="hover:text-gray-300" to="/perfil">Perfil</Link>
-          <Link to="/carrito" className="flex items-center p-2 bg-white rounded-full">
-            <ShoppingCartIcon className="h-6 w-6 text-green-700 hover:text-black" />
-          </Link>
-          {/* Botón para abrir el sidebar */}
-          <button
-            onClick={toggleSidebar}
-            className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
-          >
-            Login
-          </button>
-          <Link
-            to="/registro"
-            className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
-          >
-            Registrarse
-          </Link>
+        <div
+          className={`absolute top-16 left-0 w-full bg-green-700 lg:static lg:w-auto lg:flex lg:items-center lg:space-x-6 transition-transform duration-300 ${isMenuOpen ? 'block' : 'hidden'
+            }`}
+        >
+          <div className="flex flex-col items-center space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6 p-2">
+            <Link className="hover:text-gray-300" to="/productos">Productos</Link>
+            <Link className="hover:text-gray-300" to="/perfil">Perfil</Link>
+            <Link to="/carrito" className="flex items-center p-2 bg-white rounded-full">
+              <ShoppingCartIcon className="h-6 w-6 text-green-700 hover:text-black" />
+            </Link>
+            <button
+              onClick={toggleSidebar}
+              className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
+            >
+              Login
+            </button>
+            <Link
+              to="/registro"
+              className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
+            >
+              Registrarse
+            </Link>
+          </div>
         </div>
       </div>
 
