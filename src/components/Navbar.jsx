@@ -31,21 +31,25 @@ export function Navbar() {
           className={`absolute top-16 left-0 w-full bg-green-700 lg:static lg:w-auto lg:flex lg:items-center lg:space-x-6 transition-transform duration-300 ${isMenuOpen ? 'block' : 'hidden'
             }`}
         >
-          <div className="flex flex-col items-center space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6 p-2">
-            <Link className="hover:text-gray-300" to="/productos">Productos</Link>
-            <Link className="hover:text-gray-300" to="/perfil">Perfil</Link>
-            <Link to="/carrito" className="flex items-center p-2 bg-white rounded-full">
+          <div className="flex flex-col text-center items-center space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6 p-2 w-full">
+            <Link className="w-full text-center px-4 py-2 font-bold bg-white text-green-700 rounded-full hover:text-black transition md:bg-transparent md:text-white md:p-0 hover:bg-gray-200 md:hover:bg-transparent
+"
+              to="/productos">Productos</Link>
+            <Link className="w-full text-center px-4 py-2 font-bold bg-white text-green-700 rounded-full hover:text-black transition md:bg-transparent md:text-white md:p-0 hover:bg-gray-200 md:hover:bg-transparent
+"
+              to="/perfil">Perfil</Link>
+            <Link to="/carrito" className="flex items-center justify-center w-full p-2 bg-white rounded-full md:w-full hover:bg-gray-200 transition">
               <ShoppingCartIcon className="h-6 w-6 text-green-700 hover:text-black" />
             </Link>
             <button
               onClick={toggleSidebar}
-              className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
+              className="w-full bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 hover:text-black transition"
             >
               Login
             </button>
             <Link
               to="/registro"
-              className="bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition"
+              className="w-full bg-white text-green-700 font-bold py-2 px-4 rounded-full hover:bg-gray-200 hover:text-black transition"
             >
               Registrarse
             </Link>
