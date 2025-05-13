@@ -1,12 +1,38 @@
-# React + Vite
+# ecoNectar Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una SPA visual y estática diseñada como demo para un proyecto de clase. Este proyecto no incluye lógica funcional y se centra únicamente en la presentación visual.
 
-Currently, two official plugins are available:
+## 🌟 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Diseño moderno:** Interfaz atractiva y fácil de usar.
+- **Rápido y ligero:** Ideal para demostraciones de proyectos.
+- **100% estático:** Solo HTML, CSS y JavaScript para facilitar la portabilidad.
 
-## Expanding the ESLint configuration
+## 🚀 Instalación
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/Clndstn24/ecoNectar-front.git
+   
+2. Abre el archivo index.html en tu navegador para ver la demo.
+
+## 🛠 Uso
+
+Este proyecto es completamente estático. Puedes usarlo como base para proyectos front-end o como inspiración para diseño visual.
+
+## 🤝 Contribución
+
+Si deseas contribuir:
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tu funcionalidad o corrección de errores:
+    ```bash
+    git checkout -b feature/nueva-funcionalidad
+
+3. Realiza un pull request con tus cambios.
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
+Consulta el archivo LICENSE para más detalles.
