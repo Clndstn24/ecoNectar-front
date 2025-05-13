@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCartIcon } from '@heroicons/react/24/outline'; // Cambia la importación para Heroicons v2
+import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 export function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
