@@ -1,6 +1,61 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, setLoading, setError } from '../redux/userSlice';
 
 export function Perfil() {
+  const dispatch = useDispatch();
+  const { user: usuario, loading, error } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        
+        const response = await fetch('http://localhost:8080/api/v1/users/1');
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        dispatch(setUser(data));
+      } catch (err) {
+        dispatch(setError(err.message));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    fetchUserData();
+  }, [dispatch]);
+
+  // Si está cargando, mostramos un mensaje
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
+        <p className="text-xl">Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  // Si hay un error, lo mostramos
+  if (error) {
+    return (
+      <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
+        <p className="text-xl text-red-600">Error: {error}</p>
+      </div>
+    );
+  }
+
+  // Si no hay datos del usuario, mostramos un mensaje
+  if (!usuario.id) {
+    return (
+      <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
+        <p className="text-xl">No se encontraron datos del usuario</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
@@ -12,20 +67,36 @@ export function Perfil() {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Información Personal</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-gray-600 font-medium">Nombre:</p>
-              <p className="text-gray-800">Juan Pérez</p>
+              <p className="text-gray-600 font-medium">Nombre de Usuario:</p>
+              <p className="text-gray-800">{usuario.username || 'No disponible'}</p>
             </div>
             <div>
               <p className="text-gray-600 font-medium">Correo Electrónico:</p>
-              <p className="text-gray-800">juan.perez@example.com</p>
+              <p className="text-gray-800">{usuario.email || 'No disponible'}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 font-medium">Nombre:</p>
+              <p className="text-gray-800">{usuario.firstName || 'No disponible'}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 font-medium">Apellido:</p>
+              <p className="text-gray-800">{usuario.lastName || 'No disponible'}</p>
             </div>
             <div>
               <p className="text-gray-600 font-medium">Teléfono:</p>
-              <p className="text-gray-800">+34 123 456 789</p>
+              <p className="text-gray-800">{usuario.phoneNumber || 'No disponible'}</p>
             </div>
             <div>
               <p className="text-gray-600 font-medium">Dirección:</p>
-              <p className="text-gray-800">Calle Falsa 123, Ciudad, País</p>
+              <p className="text-gray-800">{usuario.address || 'No disponible'}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 font-medium">Ciudad:</p>
+              <p className="text-gray-800">{usuario.city || 'No disponible'}</p>
+            </div>
+            <div>
+              <p className="text-gray-600 font-medium">Código Postal:</p>
+              <p className="text-gray-800">{usuario.postalCode || 'No disponible'}</p>
             </div>
           </div>
           <button className="mt-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition">
@@ -36,6 +107,7 @@ export function Perfil() {
         {/* Pedidos recientes */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Pedidos Recientes</h2>
+          <p className="text-gray-600 mb-4">Esta sección mostrará tus pedidos cuando esté conectada a la API de pedidos</p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-300">
               <thead>
@@ -48,16 +120,9 @@ export function Perfil() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-gray-300 px-4 py-2">#12345</td>
-                  <td className="border border-gray-300 px-4 py-2">2025-04-20</td>
-                  <td className="border border-gray-300 px-4 py-2">€50.00</td>
-                  <td className="border border-gray-300 px-4 py-2 text-green-700">Entregado</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">#12346</td>
-                  <td className="border border-gray-300 px-4 py-2">2025-04-18</td>
-                  <td className="border border-gray-300 px-4 py-2">€30.00</td>
-                  <td className="border border-gray-300 px-4 py-2 text-yellow-600">En Proceso</td>
+                  <td className="border border-gray-300 px-4 py-2" colSpan="4">
+                    <p className="text-center text-gray-500">No hay pedidos para mostrar</p>
+                  </td>
                 </tr>
               </tbody>
             </table>
