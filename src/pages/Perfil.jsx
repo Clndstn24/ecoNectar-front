@@ -18,7 +18,7 @@ export function Perfil() {
         }
         
         const data = await response.json();
-        dispatch(setUser(data));
+        dispatch(setUser({ ...data, isAuthenticated: true }));
       } catch (err) {
         dispatch(setError(err.message));
       } finally {
@@ -66,10 +66,6 @@ export function Perfil() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Información Personal</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-600 font-medium">Nombre de Usuario:</p>
-              <p className="text-gray-800">{usuario.username || 'No disponible'}</p>
-            </div>
             <div>
               <p className="text-gray-600 font-medium">Correo Electrónico:</p>
               <p className="text-gray-800">{usuario.email || 'No disponible'}</p>
