@@ -1,39 +1,34 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setUser, setLoading, setError } from '../redux/userSlice';
+import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export function Perfil() {
-  const dispatch = useDispatch();
-  const { user: usuario, loading, error } = useSelector((state) => state.user);
+  const { user: usuario, loading, error, logout, refreshUser } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        dispatch(setLoading(true));
-        dispatch(setError(null));
-        
-        const response = await fetch('http://localhost:8080/api/v1/users/1');
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        dispatch(setUser({ ...data, isAuthenticated: true }));
-      } catch (err) {
-        dispatch(setError(err.message));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
+  const handleLogout = async () => {
+    const success = await logout();
+    if (success) {
+      navigate('/');
+    }
+  };
 
-    fetchUserData();
-  }, [dispatch]);
+  const handleRefreshProfile = () => {
+    refreshUser();
+  };
+  console.log('Datos del usuario:', usuario);
+  console.log('¿Está autenticado?:', usuario.isAuthenticated);
+  console.log('Loading:', loading);
+  console.log('Error:', error);
 
   // Si está cargando, mostramos un mensaje
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
-        <p className="text-xl">Cargando perfil...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
+          <p className="text-xl">Cargando perfil...</p>
+        </div>
       </div>
     );
   }
@@ -42,16 +37,33 @@ export function Perfil() {
   if (error) {
     return (
       <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
-        <p className="text-xl text-red-600">Error: {error}</p>
+        <div className="text-center">
+          <p className="text-xl text-red-600 mb-4">Error: {error}</p>
+          <button 
+            onClick={handleRefreshProfile}
+            className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"
+          >
+            Reintentar
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Si no hay datos del usuario, mostramos un mensaje
-  if (!usuario.id) {
+  // Si no está autenticado o no hay datos básicos del usuario
+  if (!usuario.isAuthenticated || (!usuario.email)) {
     return (
       <div className="w-full min-h-screen bg-gray-100 p-6 flex justify-center items-center">
-        <p className="text-xl">No se encontraron datos del usuario</p>
+        <div className="text-center">
+          <p className="text-xl mb-4">No se encontraron datos del usuario</p>
+          <p className="text-gray-600 mb-4">Debug: {JSON.stringify(usuario, null, 2)}</p>
+          <button 
+            onClick={handleRefreshProfile}
+            className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"
+          >
+            Recargar datos
+          </button>
+        </div>
       </div>
     );
   }
@@ -60,7 +72,16 @@ export function Perfil() {
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
         {/* Título */}
-        <h1 className="text-3xl font-bold text-green-700 mb-6">Tu Perfil</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-green-700">Tu Perfil</h1>
+          <button 
+            onClick={handleRefreshProfile}
+            disabled={loading}
+            className="bg-gray-500 text-white px-3 py-1 text-sm rounded hover:bg-gray-600 transition disabled:opacity-50"
+          >
+            {loading ? 'Actualizando...' : 'Actualizar'}
+          </button>
+        </div>
 
         {/* Información del usuario */}
         <div className="mb-8">
@@ -94,9 +115,28 @@ export function Perfil() {
               <p className="text-gray-600 font-medium">Código Postal:</p>
               <p className="text-gray-800">{usuario.postalCode || 'No disponible'}</p>
             </div>
+            <div>
+              <p className="text-gray-600 font-medium">Rol:</p>
+              <p className="text-gray-800">
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  (() => {
+                    switch(usuario.role) {
+                      case 'ADMIN': return 'bg-red-200 text-red-800';
+                      case 'PRODUCER': return 'bg-blue-200 text-blue-800';
+                      default: return 'bg-green-200 text-green-800';
+                    }
+                  })()
+                }`}>
+                  {usuario.role || 'USER'}
+                </span>
+              </p>
+            </div>
           </div>
-          <button className="mt-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition">
-            Editar Información
+          <button 
+            onClick={handleRefreshProfile}
+            className="mt-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"
+          >
+            Actualizar Información
           </button>
         </div>
 
@@ -128,11 +168,14 @@ export function Perfil() {
         {/* Opciones de cuenta */}
         <div>
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Opciones de Cuenta</h2>
-          <div className="flex flex-col md:flex-row md:space-x-4">
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
             <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
               Cambiar Contraseña
             </button>
-            <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+            <button 
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            >
               Cerrar Sesión
             </button>
           </div>

@@ -1,68 +1,70 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, clearUser, setLoading, setError } from "../redux/userSlice";
+import { 
+  loginUser, 
+  registerUser, 
+  getCurrentUser, 
+  logoutUser, 
+  clearError 
+} from "../redux/userSlice";
 
 export function useAuth() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.user.loading);
-  const error = useSelector((state) => state.user.error);
-  const isAuth = useSelector((state) => state.user.user.isAuthenticated);
+  const { user, loading, error } = useSelector((state) => state.user);
+  const isAuth = user.isAuthenticated;
+
+  const login = async (email, password) => {
+    try {
+      const result = await dispatch(loginUser({ email, password }));
+      return { 
+        success: result.type === 'user/login/fulfilled',
+        error: result.type === 'user/login/rejected' ? result.error?.message : null
+      };
+    } catch {
+      return error;
+    }
+  };
 
   const register = async (userData) => {
     if (userData.password !== userData.confirmPassword) {
-      dispatch(setError("Las contraseñas no coinciden"));
+      // Aquí podrías usar un toast o state local para este error específico
       return false;
     }
-    dispatch(setLoading(true));
-    dispatch(setError(null));
+    
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/v1/auth/register",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userData),
-        }
-      );
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.message || "Error al registrar usuario");
-      dispatch(setUser(data.user || { email: userData.email })); // Ajusta según respuesta del backend
-      return true;
-    } catch (err) {
-      dispatch(setError(err.message));
-      dispatch(clearUser());
+      const result = await dispatch(registerUser(userData));
+      return result.type === 'user/register/fulfilled';
+    } catch {
       return false;
-    } finally {
-      dispatch(setLoading(false));
     }
   };
 
-  const login = async (email, password) => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
+  const logout = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.text();
-      if (!response.ok)
-        throw new Error(data || "Error al iniciar sesión");
-      if (data === "Login successful") {
-        // Aquí podrías hacer otra petición para obtener los datos del usuario
-        dispatch(setUser({ ...user, isAuthenticated: true }));
-      }
+      await dispatch(logoutUser());
       return true;
-    } catch (err) {
-      dispatch(setError(err.message));
-      dispatch(clearUser());
+    } catch {
       return false;
-    } finally {
-      dispatch(setLoading(false));
     }
   };
 
-  return { user, loading, error, isAuth, register, login };
+  const clearAuthError = () => {
+    dispatch(clearError());
+  };
+
+  const refreshUser = () => {
+    dispatch(getCurrentUser());
+  };
+
+  return { 
+    user, 
+    loading, 
+    error, 
+    isAuth, 
+    login, 
+    register, 
+    logout, 
+    clearAuthError,
+    refreshUser,
+    isLoading: loading // Para mantener compatibilidad con ProtectedRoute
+  };
 }

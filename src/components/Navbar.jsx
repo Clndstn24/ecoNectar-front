@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "../hooks/useAuth";
-import { useDispatch } from "react-redux";
-import { clearUser } from "../redux/userSlice";
+
 export function Navbar() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const { login } = useAuth();
+  const { login, logout, user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isAuthenticated = useAuth().user.isAuthenticated;
+  const isAuthenticated = user.isAuthenticated;
+  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -27,11 +29,11 @@ export function Navbar() {
       // El error ya se muestra en el formulario
       return;
     }
-    setIsSidebarOpen(false); //
+    setIsSidebarOpen(false);
   };
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    dispatch(clearUser());
+
+  const handleLogout = async () => {
+    await logout();
     setIsSidebarOpen(false);
   };
 

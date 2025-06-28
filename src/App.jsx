@@ -11,34 +11,37 @@ import { Sobre } from "./pages/Sobre";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { AuthInitializer } from "./components/AuthInitializer";
 
 export default function App() {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/productos" element={<Productos />} />
-            <Route path="/productor/:id" element={<Productor />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Registro />} />
-            <Route path="/carrito" element={<Carrito />} />
-            <Route
-              path="/perfil"
-              element={
-                <ProtectedRoute>
-                  <Perfil />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/sobre" element={<Sobre />} />
-            {/* Aquí puedes añadir más rutas si luego necesitas */}
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <AuthInitializer>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/productos" element={<Productos />} />
+              <Route path="/productor/:id" element={<Productor />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/registro" element={<Registro />} />
+              <Route path="/carrito" element={<Carrito />} />
+              <Route
+                path="/perfil"
+                element={
+                  <ProtectedRoute>
+                    <Perfil />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/sobre" element={<Sobre />} />
+              {/* Aquí puedes añadir más rutas si luego necesitas */}
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </AuthInitializer>
   );
 }
